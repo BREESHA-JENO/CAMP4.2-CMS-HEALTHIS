@@ -128,5 +128,3 @@ class Staff:
 
     def __str__(self):
         return f"Staff:{self.__staff_id},Name:{self.__staff_name},gender:{self.__gender},DOJ:{self.__doj},Phone No:{self.__phone},Role: {self.__role_id},IsActive: {self.__isActive}"
-
-print("hello")
