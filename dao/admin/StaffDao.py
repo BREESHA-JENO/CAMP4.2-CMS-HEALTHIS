@@ -32,11 +32,18 @@ class StaffDAO(AdminDaoService):
     def generate_staff_id(self, role_name: str) -> str:
         try:
             cursor = self.conn.cursor()
-            cursor.callproc('generate_staff_id', (role_name, '@new_id'))
-            cursor.execute("SELECT @new_id")
-            new_id = cursor.fetchone()[0]
-            print(f"DEBUG generate_staff_id returned: {new_id}")
-            return new_id
+            # Call the stored procedure
+            cursor.callproc("generate_staff_id", (role_name,))
+            
+            # Get the result set from the stored procedure
+            result = cursor.fetchone()
+            if result:
+                new_id = result[0]  # The first column from the SELECT statement
+                print(f"DEBUG: generate_staff_id returned: {new_id}")
+                return new_id
+            else:
+                print("No result returned from generate_staff_id procedure")
+                return None
         except Exception as e:
             print("Error calling stored procedure generate_staff_id:", e)
             return None
@@ -44,7 +51,7 @@ class StaffDAO(AdminDaoService):
             cursor.close()
 
 
-    def add_staff(self, staff: Staff) -> bool:
+    def add_staff(self, staff: Staff) -> str:
         try:
             cursor = self.conn.cursor()
             cursor.execute(self.ADD_STAFF, (
@@ -61,12 +68,16 @@ class StaffDAO(AdminDaoService):
                 staff.isActive
             ))
             self.conn.commit()
-            return cursor.rowcount == 1
+            if cursor.rowcount == 1:
+                return staff.staff_id   
+            else:
+                return None
         except Exception as e:
             print("Error adding the staff:", e)
-            return False
+            return None
         finally:
             cursor.close()
+
 
     def view_all_staff(self) -> List[Staff]:
         staffs = []

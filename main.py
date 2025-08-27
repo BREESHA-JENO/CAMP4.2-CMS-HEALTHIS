@@ -2,6 +2,7 @@ import pymysql
 from db.db_connection import DBConnection
 from Menudriven.admin_menu import admin_menu
 from Menudriven.labtest_menu import lab_menu
+from Menudriven.pharma_menu import run_pharma_menu
 import bcrypt
 from validation.admin_val.user_validation import validate_login
 
@@ -82,7 +83,7 @@ def login(username, password):
 def navigate(user):
     role = user["role_name"].lower()
     if role == "admin":
-        print("\t\t\t➡ Navigating to Admin menu...\t\t\t")
+        print("\t\t\t\t➡ Navigating to Admin menu...\t\t\t")
         admin_menu()
     elif role == "doctor":
         print("➡ Navigating to Doctor menu...")
@@ -93,6 +94,7 @@ def navigate(user):
         lab_menu()
     elif role == "pharmacist":
         print("➡ Navigating to Pharmacist menu...")
+        run_pharma_menu()
     else:
         print("Unknown role, exiting...")
 

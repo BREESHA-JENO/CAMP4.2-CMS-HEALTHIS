@@ -1,16 +1,25 @@
 from dao.admin.AbstractAdminDao import AdminDaoService
 from dao.admin.StaffDao import StaffDAO
-from models.admin_models.staff import Staff
-from datetime import datetime, date
-from models.admin_models.user import UserCredentials
 from dao.admin.UserDao import UserDAO
-from validation.admin_val.staff_validation import validate_staff_input,calculate_age
+from dao.admin.DoctorDao import DoctorDAO
+
+from models.admin_models.staff import Staff
+from models.admin_models.user import UserCredentials
+from models.admin_models.doctor_details import Doctor_details
+
+from validation.admin_val.staff_validation import calculate_age
+
+from datetime import datetime, date
 
 
 class StaffManagementLib:
-    'handles CRUD logic'
+    """Handles Staff CRUD logic"""
 
     dao_service: AdminDaoService = StaffDAO()
+    role_map = {1: "Admin", 2: "Receptionist", 3: "Doctor", 4: "Lab Technician", 5: "Pharmacist"}
+    valid_blood_groups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
+
+    # ---------------- MAIN CRUD ----------------
 
     @staticmethod
     def display_all():
@@ -22,256 +31,240 @@ class StaffManagementLib:
     def add_staff():
         staff = Staff()
 
-        # staff_name input validation loop
-        while True:
-            staff_name = input("Enter the Name of the Employee: ")
-            try:
-                # minimal validation for name only here
-                if not staff_name or not staff_name.isalpha() or len(staff_name) < 3:
-                    raise ValueError("Staff name must contain only alphabets and be at least 3 letters long")
-            except ValueError as ve:
-                print(f"Validation error: {ve}. Please try again.")
-                continue
-            break
+        # Input collection with validation loops
+        staff.role_id = StaffManagementLib._input_role()
+        staff.staff_name = StaffManagementLib._input_name()
+        staff.dob = StaffManagementLib._input_dob(staff.role_id)
+        staff.gender = StaffManagementLib._input_gender()
+        staff.doj = StaffManagementLib._input_doj()
+        staff.blood_group = StaffManagementLib._input_blood_group()
+        staff.phone = StaffManagementLib._input_phone()
+        staff.email = StaffManagementLib._input_email()
+        staff.address = input("Enter the Address: ")
 
-        # dob input validation loop
-        while True:
-            dob_str = input("Enter the date of Birth (dd/MM/YYYY): ") or date.today().strftime("%d/%m/%Y")
-            try:
-                dob = datetime.strptime(dob_str, "%d/%m/%Y").date()
-                age = calculate_age(dob)
-
-                # Role unknown yet, so just check general age 18-80 now
-                if not (18 < age < 80):
-                    raise ValueError("Age must be between 18 and 80 years")
-            except ValueError as ve:
-                print(f"Validation error: {ve}. Please try again.")
-                continue
-            break
-
-        # gender input - simple, no validation loop shown but can be added similarly
-        gender = input("Enter the Gender (Male/Female/Other): ")
-
-        # doj input validation loop
-        while True:
-            doj_str = input("Enter the date of Joining (dd/MM/YYYY): ") or date.today().strftime("%d/%m/%Y")
-            try:
-                doj = datetime.strptime(doj_str, "%d/%m/%Y").date()
-            except ValueError as ve:
-                print(f"Invalid date format: {ve}. Please try again.")
-                continue
-            break
-
-        # blood_group validation loop
-        valid_blood_groups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
-        while True:
-            blood_group = input("Enter the Blood Group: ")
-            if blood_group not in valid_blood_groups:
-                print("Invalid blood group, please enter one of:", ", ".join(valid_blood_groups))
-                continue
-            break
-
-        # phone input validation loop
-        while True:
-            phone = input("Enter the Phone Number: ")
-            if not (phone.isdigit() and len(phone) == 10 and phone[0] in "6789"):
-                print("Phone must be 10 digits and start with 6, 7, 8 or 9. Please try again.")
-                continue
-            break
-
-        # email input validation loop
-        while True:
-            email = input("Enter the Email: ")
-            if "@" not in email or "." not in email:
-                print("Invalid email format. Please try again.")
-                continue
-            break
-
-        # address input (optional, no validation here)
-        address = input("Enter the Address: ")
-
-        # role_id input validation loop
-        valid_roles = {1, 2, 3, 4, 5}
-        while True:
-            try:
-                role_id = int(input("Enter the Role ID (1-Admin, 2-Receptionist, 3-Doctor, 4-Lab Technician, 5-Pharmacist): "))
-                if role_id not in valid_roles:
-                    raise ValueError("Role ID must be between 1 and 5")
-            except ValueError as ve:
-                print(f"Invalid role ID: {ve}. Please try again.")
-                continue
-            break
-
-        # Additional validation for doctor age if role is doctor
-        if role_id == 3:
-            age = calculate_age(dob)
+        # Doctor-specific age check
+        if staff.role_id == 3:
+            age = calculate_age(staff.dob)
             if not (25 < age < 80):
                 print("Doctor age must be between 26 and 79 years. Please start over.")
                 return
 
-        # Assign validated fields to staff model
-        staff.staff_name = staff_name
-        staff.dob = dob
-        staff.gender = gender
-        staff.doj = doj
-        staff.blood_group = blood_group
-        staff.phone = phone
-        staff.email = email
-        staff.address = address
-        staff.role_id = role_id
-
-        # Generate staff_id using role_name map
-        role_map = {1: "Admin", 2: "Receptionist", 3: "Doctor", 4: "Lab Technician", 5: "Pharmacist"}
-        role_name = role_map.get(role_id, "Staff")
-        staff_id = StaffManagementLib.dao_service.generate_staff_id(role_name)
-        staff.staff_id = staff_id
+        # Generate staff_id
+        role_name = StaffManagementLib.role_map.get(staff.role_id, "Staff")
+        staff.staff_id = StaffManagementLib.dao_service.generate_staff_id(role_name)
+        
+        # Check if staff_id was generated successfully
+        if not staff.staff_id:
+            print("Failed to generate staff ID. Please try again.")
+            return
+            
         staff.isActive = 'Y'
 
-        # Store staff in database
-        if StaffManagementLib.dao_service.add_staff(staff):
-            print("Added staff successfully.")
-            print("Now create user login credentials:")
-            username = input("Enter username for login: ")
-            password = input("Enter password for login: ")
-
-            user = UserCredentials(
-                staff_id=staff.staff_id,
-                username=username,
-                password=password,  # will be hashed in UserDAO
-                created_at=datetime.now()
-            )
-            UserDAO().create_user(user)
-            print("User credentials created successfully!")
-        else:
+        # Store staff in DB
+        result = StaffManagementLib.dao_service.add_staff(staff)
+        if not result:
             print("Something went wrong while adding staff.")
+            return
 
-    
+        print("Staff added successfully.")
+
+        # If doctor, collect doctor details
+        if staff.role_id == 3:
+            print("Enter Doctor Specific Details:")
+            specialization = input("Enter Specialization: ")
+            consultation_fee = StaffManagementLib._input_fee()
+            working_days = input("Enter Working Days (e.g. Mon-Fri): ")
+            working_hours = input("Enter Working Hours (e.g. 9AM-5PM): ")
+
+            doctor = Doctor_details(
+                staff_id=staff.staff_id,
+                specialization=specialization,
+                consultation_fee=consultation_fee,
+                working_days=working_days,
+                working_hours=working_hours
+            )
+
+            if DoctorDAO().add_doctor(doctor):
+                print("Doctor details added successfully.")
+            else:
+                print("Failed to add doctor details.")
+                return
+
+        # Create user credentials for any role
+        username = StaffManagementLib._input_username()
+        password = StaffManagementLib._input_password()
+        user = UserCredentials(
+            staff_id=staff.staff_id,
+            username=username,
+            password=password,
+            created_at=datetime.now()
+        )
+        UserDAO().create_user(user)
+        print("User credentials created successfully!")
+
     @staticmethod
     def find_by_staff_id(staff_id):
-        staff_id=staff_id.upper()
-        staff = StaffManagementLib.dao_service.find_by_staff_id(staff_id)
-        if staff:
-            print(staff)
-        else:
-            print("Staff not found.")
+        staff = StaffManagementLib.dao_service.find_by_staff_id(staff_id.upper())
+        print(staff if staff else "Staff not found.")
 
     @staticmethod
     def update_staff(staff_id):
-        staff_id=staff_id.upper()
-        staff = StaffManagementLib.dao_service.find_by_staff_id(staff_id)
+        staff = StaffManagementLib.dao_service.find_by_staff_id(staff_id.upper())
         if not staff:
             print("Staff not found.")
             return
 
-        # Update staff_name with validation
-        while True:
-            staff_name = input(f"Staff Name [{staff.staff_name}]: ") or staff.staff_name
-            if staff_name.isalpha() and len(staff_name) >= 3:
-                staff.staff_name = staff_name
-                break
-            else:
-                print("Name must contain only alphabets and be at least 3 letters long. Please try again.")
+        # Update fields (loops ensure correctness)
+        staff.staff_name = StaffManagementLib._input_name(default=staff.staff_name)
+        staff.gender = StaffManagementLib._input_gender(default=staff.gender)
+        staff.dob = StaffManagementLib._input_dob(default=staff.dob)
+        staff.doj = StaffManagementLib._input_doj(default=staff.doj)
+        staff.blood_group = StaffManagementLib._input_blood_group(default=staff.blood_group)
+        staff.phone = StaffManagementLib._input_phone(default=staff.phone)
+        staff.email = StaffManagementLib._input_email(default=staff.email)
+        staff.address = input(f"Address [{staff.address}]: ") or staff.address
+        staff.role_id = StaffManagementLib._input_role(default=staff.role_id)
 
-        # Update gender (simple check)
-        gender = input(f"Gender [{staff.gender}]: ") or staff.gender
-        if gender in ("Male", "Female", "Other"):
-            staff.gender = gender
-        else:
-            print(f"Invalid gender input, keeping existing value: {staff.gender}")
-
-        # Update dob with validation
-        while True:
-            dob_str = input(f"Date of Birth (dd/MM/YYYY) [{staff.dob.strftime('%d/%m/%Y')}]: ") or staff.dob.strftime('%d/%m/%Y')
-            try:
-                dob = datetime.strptime(dob_str, "%d/%m/%Y").date()
-                age = calculate_age(dob)
-                if not (18 < age < 80):
-                    print("Age must be between 18 and 80 years. Please try again.")
-                    continue
-                staff.dob = dob
-                break
-            except ValueError:
-                print("Invalid date format. Please try again.")
-
-        # Update doj with validation
-        while True:
-            doj_str = input(f"Date of Joining (dd/MM/YYYY) [{staff.doj.strftime('%d/%m/%Y')}]: ") or staff.doj.strftime('%d/%m/%Y')
-            try:
-                doj = datetime.strptime(doj_str, "%d/%m/%Y").date()
-                staff.doj = doj
-                break
-            except ValueError:
-                print("Invalid date format. Please try again.")
-
-        # Update blood group with validation
-        valid_blood_groups = {"A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"}
-        while True:
-            blood_group = input(f"Blood Group [{staff.blood_group}]: ") or staff.blood_group
-            if blood_group in valid_blood_groups:
-                staff.blood_group = blood_group
-                break
-            else:
-                print("Invalid blood group. Please try again.")
-
-        # Update phone with validation
-        while True:
-            phone = input(f"Phone Number [{staff.phone}]: ") or staff.phone
-            if phone.isdigit() and len(phone) == 10 and phone[0] in "6789":
-                staff.phone = phone
-                break
-            else:
-                print("Phone must be 10 digits and start with 6, 7, 8 or 9. Please try again.")
-
-        # Update email with validation
-        while True:
-            email = input(f"Email [{staff.email}]: ") or staff.email
-            if "@" in email and "." in email:
-                staff.email = email
-                break
-            else:
-                print("Invalid email format. Please try again.")
-
-        # Update address (optional)
-        address = input(f"Address [{staff.address}]: ") or staff.address
-        staff.address = address
-
-        # Update role_id with validation
-        valid_roles = {1, 2, 3, 4, 5}
-        while True:
-            role_input = input(f"Role ID [{staff.role_id}]: ") or str(staff.role_id)
-            try:
-                role_id = int(role_input)
-                if role_id in valid_roles:
-                    staff.role_id = role_id
-                    break
-                else:
-                    print("Role ID must be between 1 and 5. Please try again.")
-            except ValueError:
-                print("Invalid role ID. Please enter a number between 1 and 5.")
-
-        # Additional doctor age check if role is doctor
+        # Doctor-specific age check
         if staff.role_id == 3:
             age = calculate_age(staff.dob)
             if not (25 < age < 80):
                 print("Doctor age must be between 26 and 79 years. Update cancelled.")
                 return
 
-        # Save updated staff to DB
         success = StaffManagementLib.dao_service.update_staff(staff)
         print("Update successful." if success else "Update failed.")
 
-
     @staticmethod
     def disable_staff(staff_id):
-        staff_id=staff_id.upper()
-        result = StaffManagementLib.dao_service.disable_staff(staff_id)
+        result = StaffManagementLib.dao_service.disable_staff(staff_id.upper())
         print("Staff disabled." if result else "Disable failed.")
 
+    # ---------------- VALIDATION HELPERS ----------------
+
+    @staticmethod
+    def _input_name(default=None):
+        while True:
+            val = input(f"Enter Name [{default}]: ") if default else input("Enter Name: ")
+            val = val or default
+            if val and val.isalpha() and len(val) >= 3:
+                return val
+            print("Name must contain only alphabets and be at least 3 letters long.")
+
+    @staticmethod
+    def _input_dob(role_id, default=None):
+        while True:
+            prompt = f"Date of Birth (dd/MM/YYYY) [{default.strftime('%d/%m/%Y')}]:" if default else "Date of Birth (dd/MM/YYYY): "
+            dob_str = input(prompt) or (default.strftime("%d/%m/%Y") if default else None)
+            try:
+                dob = datetime.strptime(dob_str, "%d/%m/%Y").date()
+                age = calculate_age(dob)
+
+                # Doctor rule
+                if role_id == 3:
+                    if 25 < age < 80:
+                        return dob
+                    print("Doctor age must be between 26 and 79 years.")
+                    continue
+
+                # Other staff rule
+                if 18 < age < 80:
+                    return dob
+                print("Staff age must be between 19 and 79 years.")
+            except Exception:
+                print("Invalid date format. Please use dd/MM/YYYY.")
+
+
+    @staticmethod
+    def _input_gender(default=None):
+        while True:
+            val = input(f"Gender (Male/Female/Other) [{default}]: ") if default else input("Gender (Male/Female/Other): ")
+            val = val or default
+            if val in ("Male", "Female", "Other"):
+                return val
+            print("Invalid gender. Enter Male, Female, or Other.")
+
+    @staticmethod
+    def _input_doj(default=None):
+        while True:
+            prompt = f"Date of Joining (dd/MM/YYYY) [{default.strftime('%d/%m/%Y')}]:" if default else "Date of Joining (dd/MM/YYYY): "
+            doj_str = input(prompt) or (default.strftime("%d/%m/%Y") if default else None)
+            try:
+                return datetime.strptime(doj_str, "%d/%m/%Y").date()
+            except Exception:
+                print("Invalid DOJ format. Please use dd/MM/YYYY.")
+
+    @staticmethod
+    def _input_blood_group(default=None):
+        while True:
+            val = input(f"Blood Group [{default}]: ") if default else input("Blood Group: ")
+            val = val or default
+            if val in StaffManagementLib.valid_blood_groups:
+                return val
+            print("Invalid blood group. Choose from:", ", ".join(StaffManagementLib.valid_blood_groups))
+
+    @staticmethod
+    def _input_phone(default=None):
+        while True:
+            val = input(f"Phone [{default}]: ") if default else input("Phone: ")
+            val = val or default
+            if val and val.isdigit() and len(val) == 10 and val[0] in "6789":
+                return val
+            print("Phone must be 10 digits and start with 6, 7, 8 or 9.")
+
+    @staticmethod
+    def _input_email(default=None):
+        while True:
+            val = input(f"Email [{default}]: ") if default else input("Email: ")
+            val = val or default
+            if val and "@" in val and "." in val:
+                return val
+            print("Invalid email format.")
+
+    @staticmethod
+    def _input_role(default=None):
+        while True:
+            try:
+                val = input(f"Role ID (1-Admin,2-Receptionist,3-Doctor,4-Lab,5-Pharma) [{default}]: ") if default else input("Role ID (1-5): ")
+                val = int(val or default)
+                if val in StaffManagementLib.role_map:
+                    return val
+            except Exception:
+                pass
+            print("Invalid role ID. Must be 1–5.")
+
+    @staticmethod
+    def _input_fee():
+        while True:
+            try:
+                fee = float(input("Enter Consultation Fee: "))
+                if fee >= 100:   # enforce min fee
+                    return fee
+                print("Consultation fee must be at least 100.")
+            except ValueError:
+                print("Please enter a valid number for fee.")
+
+    @staticmethod
+    def _input_username():
+        while True:
+            username = input("Enter username for login: ")
+            if username and len(username) >= 4:
+                return username
+            print("Username must be at least 4 characters.")
+
+    @staticmethod
+    def _input_password():
+        while True:
+            password = input("Enter password for login: ")
+            if password and len(password) >= 6:
+                return password
+            print("Password must be at least 6 characters.")
 
 
 class AdminService:
+    """Wrapper for admin-related services"""
     def __init__(self):
-        self.admin_dao = AdminDaoService()
+        self.admin_dao = StaffDAO()   # use StaffDAO or another proper implementation
 
     def view_admin(self, staff_id):
-        return self.admin_dao.get_admin_by_id(staff_id)
+        return self.admin_dao.find_by_staff_id(staff_id.upper())
