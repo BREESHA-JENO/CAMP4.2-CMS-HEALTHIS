@@ -1,9 +1,8 @@
-import configparser
 import pymysql
 from pymysql.err import MySQLError
 
 class DBConnection:
-    """Singleton DB Connection"""
+    """Singleton MySQL DB connection for CMS Pharmacist project."""
     __instance = None
 
     def __new__(cls):
@@ -14,17 +13,17 @@ class DBConnection:
 
     def __initialize(self):
         try:
-            config = configparser.ConfigParser()
-            config.read("db_config.ini")
             self.connection = pymysql.connect(
-                host=config.get("mysql", "host"),
-                user=config.get("mysql", "user"),
-                password=config.get("mysql", "password"),
-                database=config.get("mysql", "database")
+                host="localhost",
+                user="root",
+                password="faith",
+                database="cms",
+                cursorclass=pymysql.cursors.DictCursor,
+                autocommit=False
             )
-            print(" Connected to MySQL")
+            print("✅ Connected to MySQL (singleton).")
         except MySQLError as e:
-            print(f"DB Connection Error: {e}")
+            print(f"❌ DB connection error: {e}")
             self.connection = None
 
     def get_connection(self):
