@@ -13,17 +13,17 @@ class AdminDaoService(ABC):
         ''' insert a staff details to db'''
         pass
 
-    # @abstractmethod
-    # def find_by_staff_id(self,staff_id:int)->Staff:
-    #     '''find a staff by ID'''
-    #     pass
+    @abstractmethod
+    def find_by_staff_id(self,staff_id:int)->Staff:
+        '''find a staff by ID'''
+        pass
     
-    # @abstractmethod
-    # def update_staff(self,product:Staff,staff_id:int)->bool:
-    #     '''update a staff by its ID'''
-    #     pass
+    @abstractmethod
+    def update_staff(self,staff:Staff,staff_id:int)->bool:
+        '''update a staff by its ID'''
+        pass
 
-    # @abstractmethod
-    # def disable_staff(self,product:Staff,staff_id:int)->bool:
-    #     '''disable a staff by its ID'''
-    #     pass
+    @abstractmethod
+    def disable_staff(self,staff:Staff,staff_id:int)->bool:
+        '''disable a staff by its ID'''
+        pass
