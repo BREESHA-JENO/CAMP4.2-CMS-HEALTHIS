@@ -17,3 +17,5 @@ class Doctor_details:
         if doctor_id is not None and not isinstance(doctor_id, int):
             raise ValueError("doctor_id must be an integer")
         self._doctor_id = doctor_id
+
+print("hello")

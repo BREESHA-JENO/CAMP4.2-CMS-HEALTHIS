@@ -27,3 +27,5 @@ class AdminDaoService(ABC):
     def disable_staff(self,staff:Staff,staff_id:int)->bool:
         '''disable a staff by its ID'''
         pass
+
+print("hello")

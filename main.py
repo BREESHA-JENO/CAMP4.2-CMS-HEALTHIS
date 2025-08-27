@@ -1,6 +1,7 @@
 import pymysql
 from db.db_connection import DBConnection
 from Menudriven.admin_menu import admin_menu
+from Menudriven.labtest_menu import lab_menu
 import bcrypt
 from validation.admin_val.user_validation import validate_login
 
@@ -89,6 +90,7 @@ def navigate(user):
         print("➡ Navigating to Receptionist menu...")
     elif role == "lab technician":
         print("➡ Navigating to Lab Technician menu...")
+        lab_menu()
     elif role == "pharmacist":
         print("➡ Navigating to Pharmacist menu...")
     else:
@@ -115,3 +117,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print("hello")

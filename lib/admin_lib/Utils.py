@@ -7,3 +7,5 @@ def role_redirect(role_id):
         5: "Pharmacist"
     }
     return role_map.get(role_id, "Unknown Role")
+
+print("hello")
