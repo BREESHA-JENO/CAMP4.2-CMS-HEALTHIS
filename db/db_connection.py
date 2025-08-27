@@ -5,6 +5,7 @@ class DBConnection:
     """Singleton MySQL DB connection for CMS Pharmacist project."""
     __instance = None
 
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super(DBConnection, cls).__new__(cls)
