@@ -24,7 +24,7 @@ class UserCredentials:
 
     @staff_id.setter
     def staff_id(self, staff_id):
-        if staff_id is not None and not isinstance(staff_id, int):
+        if staff_id is not None and not isinstance(staff_id, str):
             raise ValueError("staff_id must be an integer")
         self._staff_id = staff_id
 

@@ -1,13 +1,29 @@
-from db.db_connection import get_db_connection
-from models.admin_models.admin import Admin
+from abc import ABC, abstractmethod
+from typing import List
+from models.admin_models.staff import Staff
 
-class AdminDAO:
-    def get_admin_by_id(self, staff_id):
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT staff_id, staff_name, email, role_id FROM Staff WHERE staff_id = %s", (staff_id,))
-        row = cursor.fetchone()
-        conn.close()
-        if row:
-            return Admin(row["staff_id"], row["staff_name"], row["email"], row["role_id"])
-        return None
+class AdminDaoService(ABC):
+    @abstractmethod
+    def view_all_staff(self)->List[Staff]:
+        ''' fetch all staff'''
+        pass
+
+    @abstractmethod
+    def add_staff(self)->bool:
+        ''' insert a staff details to db'''
+        pass
+
+    # @abstractmethod
+    # def find_by_staff_id(self,staff_id:int)->Staff:
+    #     '''find a staff by ID'''
+    #     pass
+    
+    # @abstractmethod
+    # def update_staff(self,product:Staff,staff_id:int)->bool:
+    #     '''update a staff by its ID'''
+    #     pass
+
+    # @abstractmethod
+    # def disable_staff(self,product:Staff,staff_id:int)->bool:
+    #     '''disable a staff by its ID'''
+    #     pass
