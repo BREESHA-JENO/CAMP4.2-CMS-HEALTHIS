@@ -51,5 +51,3 @@ class UserDAO:
                 conn.close()
             except Exception as close_error:
                 print(f"Error closing resources: {close_error}")
-
-print("hello")

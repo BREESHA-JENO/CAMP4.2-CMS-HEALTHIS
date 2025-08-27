@@ -1,7 +1,7 @@
 import configparser
 import pymysql
 from pymysql.err import MySQLError
-print("hello")
+
 class DBConnection:
     'establish a singleton connection with db'
     '''this class will create only one instance'''

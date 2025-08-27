@@ -275,4 +275,3 @@ class AdminService:
 
     def view_admin(self, staff_id):
         return self.admin_dao.get_admin_by_id(staff_id)
-print("hello")

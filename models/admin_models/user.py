@@ -60,5 +60,3 @@ class UserCredentials:
 
     def __str__(self):
         return f"User[{self.user_id}] Staff: {self.staff_id}, Username: {self.username}"
-    
-print("hello")

@@ -42,5 +42,3 @@ def validate_staff_input(name, phone, email, role_id, dob, blood_group):
     if blood_group not in valid_groups:
         raise ValueError("Invalid blood group")
     return True
-
-print("hello")

@@ -7,6 +7,3 @@ class Admin:
 
     def __str__(self):
         return f"Admin({self.staff_id}, {self.name}, {self.email}, Role: {self.role_id})"
-
-
-print("hello")

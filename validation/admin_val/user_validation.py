@@ -4,5 +4,3 @@ def validate_login(username, password):
     if not password or not isinstance(password, str):
         raise ValueError("Password cannot be empty")
     return True
-
-print("hello")
