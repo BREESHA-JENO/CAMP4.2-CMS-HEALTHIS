@@ -22,7 +22,7 @@ class DBConnection:
                 password=config.get("mysql", "password"),
                 database=config.get("mysql", "database")
             )
-            print("✅ Connected to MySQL")
+            print(" Connected to MySQL")
         except MySQLError as e:
             print(f"DB Connection Error: {e}")
             self.connection = None
