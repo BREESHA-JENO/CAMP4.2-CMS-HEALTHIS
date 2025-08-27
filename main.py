@@ -1,7 +1,9 @@
 from db.db_connection import DBConnection
+from lib.lab_technician_lib.LabTestManagementLib import LabTestManagementLib
 
-def main():
-    conn=DBConnection().get_connection()
+from dao.lab_technician.LabTestDaoImple import LabTestDaoImplementation
 
-if __name__=="__main__":
+
+
+if __name__ == "__main__":
     main()
