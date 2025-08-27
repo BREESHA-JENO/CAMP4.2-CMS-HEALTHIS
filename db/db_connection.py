@@ -23,7 +23,7 @@ class DBConnection:
             )
             print("✅ Connected to MySQL (singleton).")
         except MySQLError as e:
-            print(f"❌ DB connection error: {e}")
+            print(f"DB connection error: {e}")
             self.connection = None
 
     def get_connection(self):

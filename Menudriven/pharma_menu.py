@@ -18,9 +18,9 @@ def run_pharma_menu():
             qty = int(input("Quantity: "))
             ok, med_id_or_msg = svc.add_stock(name, rcv, exp, qty)
             if ok:
-                print(f"✅ Stock added. Medicine ID: {med_id_or_msg}")
+                print(f"Stock added. Medicine ID: {med_id_or_msg}")
             else:
-                print(f"❌ Error: {med_id_or_msg}")
+                print(f"Error: {med_id_or_msg}")
 
         elif ch == "2":
             rows = svc.list_stock()
@@ -33,7 +33,7 @@ def run_pharma_menu():
             qty = int(input("Quantity: "))
             price = float(input("Price: "))
             ok, msg = svc.add_medicine_from_stock(med_id, name, qty, price)
-            print("✅ Added." if ok else f"❌ Error: {msg}")
+            print("Added." if ok else f" Error: {msg}")
 
         elif ch == "4":
             meds = svc.list_medicines()
