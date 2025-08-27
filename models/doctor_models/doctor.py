@@ -1,6 +1,6 @@
-class Consultation:
-    def __init__(self, consultation_id=None, appointment_id=None, staff_id=None, symptoms=None, diagnosis=None, notes=None, created_at=None):
-        self.consultation_id = consultation_id
+class Doctor:
+    def __init__(self, cons_id=None, appointment_id=None, staff_id=None, symptoms=None, diagnosis=None, notes=None, created_at=None):
+        self.cons_id = cons_id
         self.appointment_id = appointment_id
         self.staff_id = staff_id
         self.symptoms = symptoms
@@ -9,11 +9,11 @@ class Consultation:
         self.created_at = created_at
         
     @property
-    def get_consultation_id(self):
-        return self.consultation_id
-    @get_consultation_id.setter
-    def get_consultation_id(self, consultation_id):
-        self.consultation_id = consultation_id
+    def get_cons_id(self):
+        return self.cons_id
+    @get_cons_id.setter
+    def get_cons_id(self, cons_id):
+        self.cons_id = cons_id
         
     @property
     def get_appointment_id(self):
