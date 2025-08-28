@@ -30,9 +30,10 @@ def run_pharma_menu():
         elif ch == "3":
             med_id = input("Enter Medicine ID to move from stock: ").strip()
             name = input("Medicine name (for doctor view): ").strip()
+            gen_name=input("Medicine generic name: ").strip()
             qty = int(input("Quantity: "))
             price = float(input("Price: "))
-            ok, msg = svc.add_medicine_from_stock(med_id, name, qty, price)
+            ok, msg = svc.add_medicine_from_stock(med_id, name, gen_name,qty, price)
             print("Added." if ok else f" Error: {msg}")
 
         elif ch == "4":
