@@ -45,6 +45,3 @@ def run_pharma_menu():
             break
         else:
             print("Invalid choice.")
-
-if __name__ == "__main__":
-    run_pharma_menu()

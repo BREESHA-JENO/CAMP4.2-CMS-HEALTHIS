@@ -83,16 +83,17 @@ def login(username, password):
 def navigate(user):
     role = user["role_name"].lower()
     if role == "admin":
-        print("➡ Navigating to Admin menu...")
+        print("\t\t\t\t\t➡ Navigating to Admin menu...")
         admin_menu()
     elif role == "doctor":
-        print("➡ Navigating to Doctor menu...")
+        print("\t\t\t\t\t➡ Navigating to Doctor menu...")
     elif role == "receptionist":
-        print("➡ Navigating to Receptionist menu...")
+        print("\t\t\t\t\t➡ Navigating to Receptionist menu...")
     elif role == "lab technician":
-        print("➡ Navigating to Lab Technician menu...")
+        print("\t\t\t\t\t➡ Navigating to Lab Technician menu...")
     elif role == "pharmacist":
-        print("➡ Navigating to Pharmacist menu...")
+        print("\t\t\t\t\t➡ Navigating to Pharmacist menu...")
+        run_pharma_menu()
     else:
         print("Unknown role, exiting...")
 
@@ -117,4 +118,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("hello")
