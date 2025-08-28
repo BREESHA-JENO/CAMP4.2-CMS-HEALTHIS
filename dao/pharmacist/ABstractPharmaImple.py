@@ -1,8 +1,11 @@
 import pymysql
 from pymysql.cursors import DictCursor
+import pymysql
+from pymysql.cursors import DictCursor
 from db.db_connection import DBConnection
 from models.pharmacist_models.pharmacist import StockMedicine, Medicine
 from dao.pharmacist.AbstractPharmacistDao import AbstractPharmacistDao
+
 
 
 class PharmacistDaoImpl(AbstractPharmacistDao):
@@ -71,11 +74,13 @@ class PharmacistDaoImpl(AbstractPharmacistDao):
                     cur.execute("UPDATE stock_medicines SET quantity=quantity-%s WHERE stock_id=%s", (deduct, s['stock_id']))
                     remaining -= deduct
 
+
             self.conn.commit()
             return True, None
         except Exception as e:
             self.conn.rollback()
             return False, str(e)
+
 
 
     def list_medicines(self):

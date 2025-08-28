@@ -2,7 +2,7 @@ from dao.lab_technician.LabTestDaoImple import LabTestDaoImplementation
 from models.lab_technician_models.lab_test import LabTest
 
 
-def main():
+def lab_menu():
     dao = LabTestDaoImplementation()
 
     while True:

@@ -23,6 +23,16 @@ def first_time_setup():
         (5, 'Pharmacist')
         ON DUPLICATE KEY UPDATE role_name = VALUES(role_name)
     """)
+    # Insert all required roles if not present
+    cursor.execute("""
+        INSERT INTO Roles (role_id, role_name) VALUES
+        (1, 'Admin'),
+        (2, 'Receptionist'),
+        (3, 'Doctor'),
+        (4, 'Lab Technician'),
+        (5, 'Pharmacist')
+        ON DUPLICATE KEY UPDATE role_name = VALUES(role_name)
+    """)
 
     # Check if super admin exists
     cursor.execute("SELECT COUNT(*) FROM user_credentials")
@@ -32,7 +42,12 @@ def first_time_setup():
         print("⚠ No users found. Creating Super Admin...")
         username = input("Enter admin username: ")
         password = input("Enter admin password: ")
+    if count == 0:
+        print("⚠ No users found. Creating Super Admin...")
+        username = input("Enter admin username: ")
+        password = input("Enter admin password: ")
 
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         # Create staff record
@@ -51,7 +66,10 @@ def first_time_setup():
 
         conn.commit()
         print("Super Admin created successfully")
+        conn.commit()
+        print("Super Admin created successfully")
 
+    cursor.close()
     cursor.close()
 
 
@@ -171,6 +189,9 @@ def main():
     if user:
         navigate(user)
 
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

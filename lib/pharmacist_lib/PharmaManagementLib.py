@@ -115,11 +115,19 @@ class PharmaManagementLib:
         return "\n".join(formatted_output)
 
     # ---------- MEDICINES ----------
+<<<<<<< HEAD
     def add_medicine_from_stock(self, medicine_id, medicine_name, generic_name, quantity, price):
         ok, msg = validate_medicine_input(medicine_id, quantity, price)
         if not ok:
             return False, msg
         return self.dao.add_medicine_from_stock(medicine_id, medicine_name, generic_name, quantity, price)
+=======
+    def add_medicine_from_stock(self, medicine_id, medicine_name,generic_name, quantity, price):
+        ok, msg = validate_medicine_input(medicine_id, quantity, price)
+        if not ok:
+            return False, msg
+        return self.dao.add_medicine_from_stock(medicine_id, medicine_name,generic_name, quantity, price)
+>>>>>>> 7b6571e3a4fdb19a9eff7d48875835a2cd4af027
 
     def update_medicine(self, med_id, field, value):
         return self.dao.update_medicine(med_id, field, value)
