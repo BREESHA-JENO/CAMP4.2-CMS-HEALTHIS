@@ -1,12 +1,14 @@
 from datetime import datetime, date
+from db.db_connection import DBConnection  # use your singleton
 
 DATE_FMT = "%Y-%m-%d"
 
 def parse_date(s: str):
     try:
         return datetime.strptime(s, DATE_FMT).date()
-    except Exception:
+    except ValueError:
         return None
+
 
 def validate_stock_input(medicine_name: str, received_date: str, expiry_date: str, quantity: int):
     if not medicine_name.strip():
@@ -21,11 +23,30 @@ def validate_stock_input(medicine_name: str, received_date: str, expiry_date: st
         return False, "Quantity must be > 0"
     return True, None
 
-def validate_medicine_input(medicine_id: str, quantity: int, price: float):
+def validate_medicine_input(medicine_id: str, medicine_name: str, quantity: int, price: float):
     if not medicine_id.strip():
         return False, "Medicine ID required"
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT medicine_name FROM stock_medicine WHERE medicine_id = %s",
+                (medicine_id,)
+            )
+            row = cur.fetchone()
+            if not row:
+                return False, "Medicine ID doesn't exist"
+            if row["medicine_name"].lower() != medicine_name.lower():
+                return False, "Medicine ID and Medicine Name are not matching"
+    except Exception as e:
+        return False, f"DB error: {e}"
+    if not medicine_name.strip():
+        return False, "Medicine name required"
     if quantity <= 0:
         return False, "Quantity must be > 0"
     if price < 0:
         return False, "Price must be >= 0"
+
+    conn = DBConnection().get_connection()
+ 
+
     return True, None
