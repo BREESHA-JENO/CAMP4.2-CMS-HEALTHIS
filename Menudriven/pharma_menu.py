@@ -88,10 +88,5 @@ def run_pharma_menu():
                     print("Invalid choice")
 
         elif ch == "6":
-            break
-        else:
-<<<<<<< HEAD
-            print("Invalid choice.")
-=======
-            print("Invalid choice.")
->>>>>>> 7b6571e3a4fdb19a9eff7d48875835a2cd4af027
+            print("Exiting program...")
+            exit()
