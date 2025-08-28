@@ -19,11 +19,11 @@ class PharmaManagementLib:
         return self.dao.list_stock()
 
     # ---------- MEDICINES ----------
-    def add_medicine_from_stock(self, medicine_id, medicine_name, quantity, price):
+    def add_medicine_from_stock(self, medicine_id, medicine_name,generic_name, quantity, price):
         ok, msg = validate_medicine_input(medicine_id, quantity, price)
         if not ok:
             return False, msg
-        return self.dao.add_medicine_from_stock(medicine_id, medicine_name, quantity, price)
+        return self.dao.add_medicine_from_stock(medicine_id, medicine_name,generic_name, quantity, price)
 
     def list_medicines(self):
         return self.dao.list_medicines()
