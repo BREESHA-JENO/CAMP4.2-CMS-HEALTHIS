@@ -4,6 +4,7 @@ from db.db_connection import DBConnection
 from models.pharmacist_models.pharmacist import StockMedicine, Medicine
 from dao.pharmacist.AbstractPharmacistDao import AbstractPharmacistDao
 
+
 class PharmacistDaoImpl(AbstractPharmacistDao):
     def __init__(self):
         self.conn = DBConnection().get_connection()
