@@ -3,7 +3,7 @@ from db.db_connection import DBConnection
 from Menudriven.admin_menu import admin_menu
 import bcrypt
 from validation.admin_val.user_validation import validate_login
-
+from Menudriven.doctor_menu import doctor_menu
 
 
 # ---------- First Time Setup ----------
@@ -85,6 +85,7 @@ def navigate(user):
         admin_menu()
     elif role == "doctor":
         print("➡ Navigating to Doctor menu...")
+        doctor_menu()
     elif role == "receptionist":
         print("➡ Navigating to Receptionist menu...")
     elif role == "lab technician":
@@ -115,7 +116,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("hello")
 
 
 
