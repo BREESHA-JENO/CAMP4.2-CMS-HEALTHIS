@@ -1,4 +1,3 @@
-# adminmenu.py
 from lib.admin_lib.AdminManagementLib import StaffManagementLib
 
 def admin_menu():
@@ -21,7 +20,7 @@ def admin_menu():
 
         elif choice == "3":
             staff_id = input("Enter Staff ID to search: ")
-            staff = StaffManagementLib.dao_service.search_staff_by_id(staff_id)
+            staff = StaffManagementLib.dao_service.find_by_staff_id(staff_id)  
             if staff:
                 print(staff)
             else:
@@ -29,15 +28,11 @@ def admin_menu():
 
         elif choice == "4":
             staff_id = input("Enter Staff ID to update: ")
-            # you can add prompts here for updating fields
-            StaffManagementLib.dao_service.update_staff(staff_id)
+            StaffManagementLib.update_staff(staff_id)  # Preferred to route logic through lib!
 
         elif choice == "5":
             staff_id = input("Enter Staff ID to disable: ")
-            if StaffManagementLib.dao_service.disable_staff(staff_id):
-                print("Staff disabled successfully!")
-            else:
-                print("Unable to disable staff!")
+            StaffManagementLib.disable_staff(staff_id)  # Preferred!
 
         elif choice == "6":
             print("Exiting Admin Menu...")

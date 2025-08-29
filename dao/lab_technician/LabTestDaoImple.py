@@ -18,15 +18,18 @@ class LabTestDaoImplementation(LabTestDaoService):
         try:
             cursor = self.conn.cursor()
 
-            # call with a dummy placeholder for OUT param
-            cursor.callproc('generate_labtest_id', [None])  
-
-            # fetch OUT parameter from procedure call
-            cursor.execute("SELECT @_generate_labtest_id_0")  
-            new_id = cursor.fetchone()[0]
-
-            print(f"DEBUG generate_labtest_id returned: {new_id}")
-            return new_id
+            # Call the stored procedure
+            cursor.callproc('generate_labtest_id', [])
+            
+            # Get the result set from the stored procedure
+            result = cursor.fetchone()
+            if result:
+                new_id = result[0]  # The first column from the SELECT statement
+                print(f"DEBUG generate_labtest_id returned: {new_id}")
+                return new_id
+            else:
+                print("No result returned from generate_labtest_id procedure")
+                return None
         except Exception as e:
             print("Error calling stored procedure generate_labtest_id:", e)
             return None

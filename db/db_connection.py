@@ -7,7 +7,6 @@ class DBConnection:
     '''this class will create only one instance'''
     __instance=None #to store the singleton instance
 
-
     def __new__(cls):
         """
         overide to implement singleton
