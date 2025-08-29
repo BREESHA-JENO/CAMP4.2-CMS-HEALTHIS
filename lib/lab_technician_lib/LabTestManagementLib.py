@@ -49,6 +49,17 @@ class LabTestManagementLib:
                 print("Something went wrong...")
 
     @staticmethod
+    def search_by_id():
+        tid = input("Enter Test ID: ")
+        test = LabTestManagementLib.dao_service.find_by_test_id(tid)
+        if test:
+            print("Lab Test Found:")
+            print(test)
+        else:
+            print("No Lab Test found with ID:", tid)
+
+
+    @staticmethod
     def disable_lab_test():
         tid = (input("Enter Test ID: "))
         test = LabTestManagementLib.dao_service.find_by_test_id(tid)

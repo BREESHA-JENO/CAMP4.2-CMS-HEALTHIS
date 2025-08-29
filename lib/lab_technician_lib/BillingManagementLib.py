@@ -17,20 +17,17 @@ class BillingManagementLib:
     @staticmethod
     def add_bill():
         bill = Billing()
-        bill.set_patient_id(int(input("Enter Patient ID: ")))
-        bill.set_bill_date(date.today())
-
-        while True:
-            desc = input("Enter Item Description (blank to stop): ")
-            if not desc:
-                break
-            amt = float(input("Enter Amount: "))
-            bill.add_item(desc, amt)
+        bill.set_patient_id((input("Enter Patient ID: ")))
+        bill.set_lab_test_id(input("Enter Lab Test ID: "))   # <-- NEW
+        bill.set_total_amount(float(input("Enter Total Amount: ")))  # <-- NEW
+        bill.set_status("Paid")  # default
+        bill.set_created_at(date.today())
 
         if BillingManagementLib.dao_service.insert_bill(bill):
-            print("Bill inserted successfully...")
+          print("Bill inserted successfully...")
         else:
-            print("Something went wrong...")
+         print("Something went wrong...")
+
 
     @staticmethod
     def mark_paid():
@@ -42,8 +39,7 @@ class BillingManagementLib:
         print(bill)
         confirm = input("Mark this bill as PAID? (y/n): ")
         if confirm.lower() == "y":
-            bill.set_is_paid(True)
-            bill.set_payment_mode(input("Enter Payment Mode (Cash/Card/UPI): "))
+            bill.set_status(True)
             if BillingManagementLib.dao_service.update_bill(bill, bid):
                 print("Bill updated successfully...")
             else:

@@ -13,7 +13,7 @@ class LabResult:
     def __init__(self,
                  res_id: Optional[int] = None,
                  lab_request_id: Optional[int] = None,
-                 lab_test_id: Optional[str] = None,
+                 test_id_doc: Optional[str] = None,
                  staff_id: Optional[int] = None,
                  result_value: Optional[float] = None,
                  normal_range: Optional[float] = None,
@@ -21,7 +21,7 @@ class LabResult:
                  created_at: Optional[datetime] = None):
         self.__res_id = res_id
         self.__lab_request_id = lab_request_id
-        self.__lab_test_id = lab_test_id
+        self.__test_id_doc = test_id_doc
         self.__staff_id = staff_id
         self.__result_value = result_value
         self.__normal_range = normal_range
@@ -42,11 +42,11 @@ class LabResult:
     def set_lab_request_id(self, request_id):
         self.__lab_request_id = request_id
 
-    def get_lab_test_id(self):
-        return self.__lab_test_id
+    def get_test_id_doc(self):
+        return self.__test_id_doc
 
-    def set_lab_test_id(self, test_id):
-        self.__lab_test_id = test_id
+    def set_test_id_doc(self, test_id):
+        self.__test_id_doc = test_id
 
     def get_staff_id(self):
         return self.__staff_id
@@ -82,6 +82,6 @@ class LabResult:
 
 
     def __str__(self):
-        return (f"Result ID:{self.__res_id:<8}, Req ID:{self.__lab_request_id:<8}, Test ID:{self.__lab_test_id:<6}, "
+        return (f"Result ID:{self.__res_id:<8}, Req ID:{self.__lab_request_id:<8}, Test ID:{self.__test_id_doc:<6}, "
                 f"Tech ID:{self.__staff_id:<6}, Value:{self.__result_value:<12} "
                 f"Range:{self.__normal_range:<12}, Date:{self.__created_at}, Status:{self.__remarks}")

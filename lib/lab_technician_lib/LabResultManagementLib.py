@@ -18,8 +18,8 @@ class LabResultManagementLib:
     def add_result():
         res = LabResult()
         res.set_lab_request_id(int(input("Enter Request ID: ")))
-        res.set_lab_test_id(int(input("Enter Test ID: ")))
-        res.set_staff_id(int(input("Enter Technician ID: ")))
+        res.set_test_id_doc(int(input("Enter Test ID: ")))
+        res.set_staff_id((input("Enter Staff ID: ")))
         res.set_result_value(input("Enter Result Value: "))
         res.set_normal_range(input("Enter Normal Range: "))
         res.set_remarks("Enter the remarks")
@@ -45,3 +45,50 @@ class LabResultManagementLib:
                 print("Result verified successfully...")
             else:
                 print("Something went wrong...")
+
+    @staticmethod
+    def update_result():
+        rid = int(input("Enter Result ID to update: "))
+        result = LabResultManagementLib.dao_service.find_by_result_id(rid)
+        if not result:
+            print("Result not found")
+            return
+        print("Current Result:", result)
+        result.set_result_value(input("Enter new Result Value: "))
+        result.set_normal_range(input("Enter new Normal Range: "))
+        result.set_remarks(input("Enter new Remarks: "))
+        if LabResultManagementLib.dao_service.update_result(result, rid):
+            print("Result updated successfully.")
+        else:
+            print("Update failed.")
+
+    @staticmethod
+    def search_by_id():
+        rid = int(input("Enter Result ID to search: "))
+        result = LabResultManagementLib.dao_service.find_by_result_id(rid)
+        if result:
+            print(result)
+        else:
+            print("Result not found.")
+
+    @staticmethod
+    def disable_lab_result():
+        rid = int(input("Enter Result ID to disable: "))
+        result = LabResultManagementLib.dao_service.find_by_result_id(rid)
+        if not result:
+            print("Result not found.")
+            return
+        print(result)
+        confirm = input("Do you want to disable this result? (y/n): ")
+        if confirm.lower() == "y":
+            # Assuming you have a 'status' or similar field in your LabResult and DB
+            result.set_status("DISABLED")
+            if LabResultManagementLib.dao_service.update_result(result, rid):
+                print("Lab result disabled successfully.")
+            else:
+                print("Failed to disable lab result.")
+        else:
+            print("Operation cancelled.")
+
+
+
