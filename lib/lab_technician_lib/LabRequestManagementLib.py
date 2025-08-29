@@ -1,8 +1,7 @@
 from dao.lab_technician.LabRequestDaoImple import LabRequestDaoImplementation
 from dao.lab_technician.abstractLab_requestDao import LabRequestDaoService
 from models.lab_technician_models.lab_request import LabRequest
-from models.lab_technician_models.lab_test import LabTest
-from datetime import date
+from datetime import datetime
 
 class LabRequestManagementLib:
     """Handles logic for Lab Requests"""
@@ -18,19 +17,12 @@ class LabRequestManagementLib:
     @staticmethod
     def add_request():
         req = LabRequest()
-        req.set_doctor_id(int(input("Enter Doctor ID: ")))
-        req.set_patient_id(int(input("Enter Patient ID: ")))
-        req.set_request_date(date.today())
-        notes = input("Enter Clinical Notes: ")
-        req.set_clinical_notes(notes)
-
-        # add tests interactively
-        while True:
-            tid = input("Enter Test ID to add (blank to stop): ")
-            if not tid:
-                break
-            test = LabTest(test_id=int(tid), test_name="")  # minimal info, DAO should fill later
-            req.add_test(test)
+        req.set_consultation_id(input("Enter Consultation ID: "))
+        req.set_patient_id(input("Enter Patient ID: "))
+        req.set_test_id_doc(int(input("Enter Test ID: ")))
+        req.set_staff_id(input("Enter Staff/Doctor ID: "))
+        req.set_status("Completed")
+        req.set_created_datetime(datetime.now())
 
         if LabRequestManagementLib.dao_service.insert_request(req):
             print("Lab request inserted successfully...")

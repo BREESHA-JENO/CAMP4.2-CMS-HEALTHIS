@@ -9,7 +9,7 @@ class LabTestDaoImplementation(LabTestDaoService):
     INSERT_TEST = "INSERT INTO lab_test_master(lab_test_id,test_name, sampletype, price, isActive, created_at) VALUES(%s,%s,%s,%s,%s,%s)"
     FIND_BY_ID = "SELECT * FROM lab_test_master WHERE lab_test_id=%s"
     UPDATE_TEST = "UPDATE lab_test_master SET test_name=%s, sampletype=%s, price=%s  WHERE lab_test_id=%s"
-    DISABLE_TEST = "UPDATE labtests SET isActive='N' WHERE lab_test_id=%s"
+    DISABLE_TEST = "UPDATE lab_test_master SET isActive='N' WHERE lab_test_id=%s"
 
     def __init__(self):
         self.conn = DBConnection().get_connection()
@@ -89,9 +89,11 @@ class LabTestDaoImplementation(LabTestDaoService):
         cursor.close()
         return success
 
+
+
     def disable_test(self, test: LabTest, test_id: str) -> bool:
         cursor = self.conn.cursor()
-        cursor.execute(self.DISABLE_TEST, (test_id))
+        cursor.execute(self.DISABLE_TEST, (test_id,))
         self.conn.commit()
         success = cursor.rowcount == 1
         cursor.close()

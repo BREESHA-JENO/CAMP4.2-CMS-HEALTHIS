@@ -6,10 +6,10 @@ from pymysql.cursors import DictCursor
 
 class LabResultDaoImplementation(LabResultDaoService):
     DISPLAY_ALL = """SELECT * FROM lab_result"""
-    INSERT_RESULT = """INSERT INTO lab_result(res_id, lab_request_id, staff_id, result_value, normal_range,remarks,created_at)
+    INSERT_RESULT = """INSERT INTO lab_result(lab_request_id, test_id_doc, staff_id, result_value, normal_range,remarks,created_at)
                        VALUES(%s,%s,%s,%s,%s,%s,%s)"""
     FIND_BY_ID = """SELECT * FROM lab_result WHERE res_id=%s"""
-    UPDATE_RESULT = """UPDATE lab_result SET result_value=%s, remarks=%s WHERE res_id=%s"""
+    UPDATE_RESULT = """UPDATE lab_result SET result_value=%s, normal_range=%s, remarks=%s WHERE res_id=%s"""
 
     def __init__(self):
         self.conn = DBConnection().get_connection()
@@ -19,7 +19,7 @@ class LabResultDaoImplementation(LabResultDaoService):
         cursor.execute(self.DISPLAY_ALL)
         for row in cursor.fetchall():
             results.append(LabResult(res_id=row["res_id"], lab_request_id=row["lab_request_id"],
-                                     lab_test_id=row["lab_test_id"], staff_id=row["staff_id"],
+                                     test_id_doc=row["test_id_doc"], staff_id=row["staff_id"],
                                      result_value=row["result_value"], normal_range=row["normal_range"],
                                      remarks=row["remarks"], created_at=row["created_at"]))
                                      
@@ -28,7 +28,7 @@ class LabResultDaoImplementation(LabResultDaoService):
 
     def insert_result(self, result: LabResult) -> bool:
         cursor = self.conn.cursor()
-        cursor.execute(self.INSERT_RESULT, (result.get_lab_request_id(), result.get_lab_test_id(),
+        cursor.execute(self.INSERT_RESULT, (result.get_lab_request_id(), result.get_test_id_doc(),
                                             result.get_staff_id(), result.get_result_value(),
                                             result.get_normal_range(), result.get_remarks(),
                                             result.get_created_at()))
@@ -46,8 +46,8 @@ class LabResultDaoImplementation(LabResultDaoService):
         if not row:
             return None
         return LabResult(res_id=row["res_id"], lab_request_id=row["lab_request_id"],
-                         lab_test_id=row["lab_test_id"], staff_id=row["staff_id"],
-                         result_value=row["result_value"], normal_range=row["normalrange"],
+                         test_id_doc=row["test_id_doc"], staff_id=row["staff_id"],
+                         result_value=row["result_value"], normal_range=row["normal_range"],
                          remarks=row["remarks"], created_at=row["created_at"])
                          
 

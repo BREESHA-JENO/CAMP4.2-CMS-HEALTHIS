@@ -1,45 +1,43 @@
 # models/lab_request.py
-from datetime import date, datetime
-from typing import List, Optional
+from datetime import datetime
+from typing import Optional
 from .lab_test import LabTest
-import re
 
 class LabRequest:
     """
     Represents a lab request raised by a doctor for a patient.
-    Contains references to tests (by object or ids), status, and timestamps.
+    Matches the lab_request table in the database.
     """
-    VALID_STATUSES = ("NEW", "SENT", "IN_PROGRESS", "COMPLETED", "CANCELLED")
+    VALID_STATUSES = ("New", "Sent", "In_Progress", "Completed", "Cancelled")
 
     def __init__(self,
-                 request_id: Optional[int] = None,
-                 doctor_id: Optional[int] = None,
-                 patient_id: Optional[int] = None,
-                 tests: Optional[List[LabTest]] = None,
-                 request_date: Optional[date] = None,
-                 clinical_notes: str = "",
-                 status: str = "NEW"):
-        self.__request_id = request_id
-        self.__doctor_id = doctor_id
+                 lab_request_id: Optional[int] = None,
+                 consultation_id: Optional[str] = None,
+                 patient_id: Optional[str] = None,
+                 test_id_doc: Optional[int] = None,
+                 staff_id: Optional[str] = None,
+                 status: str = "Completed",
+                 created_at: Optional[datetime] = None):
+        self.__lab_request_id = lab_request_id
+        self.__consultation_id = consultation_id
         self.__patient_id = patient_id
-        self.__tests = tests if tests else []  # list of LabTest objects
-        self.__request_date = request_date if request_date else date.today()
-        self.__clinical_notes = clinical_notes
+        self.__test_id_doc = test_id_doc
+        self.__staff_id = staff_id
         self.__status = status if status in self.VALID_STATUSES else "NEW"
-        self.__created_datetime = datetime.now()
+        self.__created_at = created_at if created_at else datetime.now()
 
-    # getters/setters
-    def get_request_id(self):
-        return self.__request_id
+    # --- getters/setters ---
+    def get_lab_request_id(self):
+        return self.__lab_request_id
 
-    def set_request_id(self, rid):
-        self.__request_id = rid
+    def set_lab_request_id(self, rid):
+        self.__lab_request_id = rid
 
-    def get_doctor_id(self):
-        return self.__doctor_id
+    def get_consultation_id(self):
+        return self.__consultation_id
 
-    def set_doctor_id(self, did):
-        self.__doctor_id = did
+    def set_consultation_id(self, cid):
+        self.__consultation_id = cid
 
     def get_patient_id(self):
         return self.__patient_id
@@ -47,28 +45,17 @@ class LabRequest:
     def set_patient_id(self, pid):
         self.__patient_id = pid
 
-    def get_tests(self):
-        return list(self.__tests)  # return copy
+    def get_test_id_doc(self):
+        return self.__test_id_doc
 
-    def add_test(self, test: LabTest):
-        if not isinstance(test, LabTest):
-            raise ValueError("add_test expects a LabTest instance")
-        self.__tests.append(test)
+    def set_test_id_doc(self, tid):
+        self.__test_id_doc = tid
 
-    def remove_test_by_id(self, test_id):
-        self.__tests = [t for t in self.__tests if t.get_test_id() != test_id]
+    def get_staff_id(self):
+        return self.__staff_id
 
-    def get_request_date(self):
-        return self.__request_date
-
-    def set_request_date(self, rdate):
-        self.__request_date = rdate
-
-    def get_clinical_notes(self):
-        return self.__clinical_notes
-
-    def set_clinical_notes(self, notes: str):
-        self.__clinical_notes = notes
+    def set_staff_id(self, sid):
+        self.__staff_id = sid
 
     def get_status(self):
         return self.__status
@@ -79,16 +66,14 @@ class LabRequest:
         self.__status = status
 
     def get_created_datetime(self):
-        return self.__created_datetime
+        return self.__created_at
 
-    def total_estimated_cost(self):
-        """
-        Sum the unit_price of all included tests.
-        """
-        return sum([t.get_unit_price() for t in self.__tests])
+    def set_created_datetime(self, cdt):
+        self.__created_at = cdt
 
+    # --- string representation ---
     def __str__(self):
-        tests_str = ", ".join([t.get_test_name() or f"ID:{t.get_test_id()}" for t in self.__tests])
-        return (f"Request ID:{self.__request_id:<8}, Doctor ID:{self.__doctor_id:<6}, "
-                f"Patient ID:{self.__patient_id:<6}, Tests:[{tests_str}], "
-                f"Requested:{self.__request_date}, Status:{self.__status}")
+        return (f"Request ID:{self.__lab_request_id}, Consultation ID:{self.__consultation_id}, "
+                f"Patient ID:{self.__patient_id}, Test ID:{self.__test_id_doc}, "
+                f"Staff ID:{self.__staff_id}, Status:{self.__status}, "
+                f"Created At:{self.__created_at}")
