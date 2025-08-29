@@ -27,18 +27,27 @@ class UserDAO:
         return None
 
     def create_user(self, user: UserCredentials):
-        conn = DBConnection().get_connection()
-        cursor = conn.cursor()
+        try:
+            conn = DBConnection().get_connection()
+            cursor = conn.cursor()
 
-        hashed_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
+            hashed_password = bcrypt.hashpw(user.password.encode(), bcrypt.gensalt()).decode()
 
-        query = """
-            INSERT INTO user_credentials (staff_id, username, password, created_at)
-            VALUES (%s, %s, %s, %s)
-        """
-        cursor.execute(query, (user.staff_id, user.username, hashed_password, user.created_at or datetime.now()))
-        conn.commit()
+            query = """
+                INSERT INTO user_credentials (staff_id, username, password, created_at)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(query, (user.staff_id, user.username, hashed_password, user.created_at or datetime.now()))
+            conn.commit()
+            return True
 
-        cursor.close()
-        conn.close()
-        return True
+        except Exception as e:
+            print(f"Error occurred while creating user: {e}")  # Prefer logging in production
+            return False
+
+        finally:
+            try:
+                cursor.close()
+                conn.close()
+            except Exception as close_error:
+                print(f"Error closing resources: {close_error}")
